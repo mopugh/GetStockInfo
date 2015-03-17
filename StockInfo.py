@@ -67,7 +67,7 @@ def GetSP500Options(filename):
 	for ticker in sp500['Symbol']:
 
 		print ticker
-		call_options,put_options = StockInfo.GetOptionsChain(ticker)
+		call_options,put_options = GetOptionsChain(ticker)
 		if(len(call_options)!=0):
 			call_options['Symbol'] = ticker
 			call_options['Call/Put'] = 'Call'
@@ -80,7 +80,7 @@ def GetSP500Options(filename):
 		Options = Options.append(call_options)
 		Options = Options.append(put_options)
 
-		return Options
+	return Options
 
 def GetOptionsChain(ticker):
 	'''Takes a ticker symbol and returns
@@ -94,8 +94,12 @@ def GetOptionsChain(ticker):
 
 	table = soup.findAll('table')
 
-	calls_df = ExtractTable(table[1]) #Calls table is table[1]
-	puts_df = ExtractTable(table[2]) #Puts table is table[2]
+	if(len(table) == 3):
+		calls_df = ExtractTable(table[1]) #Calls table is table[1]
+		puts_df = ExtractTable(table[2]) #Puts table is table[2]
+	else:
+		calls_df = pd.DataFrame()
+		puts_df = pd.DataFrame()
 
 	return calls_df,puts_df
 
